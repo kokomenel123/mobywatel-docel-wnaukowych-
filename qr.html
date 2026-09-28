@@ -304,7 +304,7 @@
 <body>
 
     <header class="app-header">
-        <div class="back-btn" onclick="resetApp()">&lt; Kod QR</div>
+        <a href="card.html" class="back-btn">&lt; Kod QR</a>
         <div class="header-title" id="page-title">Zeskanuj ten kod QR</div>
         <div class="help-icon">?</div>
     </header>
@@ -347,26 +347,26 @@
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item">
+        <a href="card.html" class="nav-item">
             <div class="nav-icon">📇</div>
             <div>Dokumenty</div>
-        </div>
-        <div class="nav-item">
+        </a>
+        <a href="services.html" class="nav-item">
             <div class="nav-icon">📁</div>
             <div>Usługi</div>
-        </div>
+        </a>
         <div class="nav-item active">
             <div class="nav-icon qr-icon"></div>
             <div>Kod QR</div>
         </div>
-        <div class="nav-item">
+        <a href="search.html" class="nav-item">
             <div class="nav-icon">🔍</div>
             <div>Szukaj</div>
-        </div>
-        <div class="nav-item">
+        </a>
+        <a href="more.html" class="nav-item">
             <div class="nav-icon">⣿</div>
             <div>Więcej</div>
-        </div>
+        </a>
     </nav>
 
     <script>
@@ -408,23 +408,6 @@
             document.getElementById('qr-screen').classList.add('hidden');
             document.getElementById('success-screen').classList.remove('hidden');
             document.getElementById('page-title').innerText = 'Status weryfikacji';
-        }
-
-        // Resetowanie aplikacji przy powrocie
-        function resetApp() {
-            clearInterval(timerInterval);
-            timeLeft = TOTAL_TIME;
-            document.getElementById('countdown').innerText = "03:00";
-            document.getElementById('countdown').style.color = "var(--primary-blue)";
-            document.getElementById('progress-fill').style.width = "100%";
-            document.getElementById('progress-fill').style.backgroundColor = "var(--primary-blue)";
-            document.querySelector('.qr-wrapper').style.pointerEvents = "auto";
-            document.querySelector('.qr-wrapper').style.opacity = "1";
-            
-            document.getElementById('success-screen').classList.add('hidden');
-            document.getElementById('qr-screen').classList.remove('hidden');
-            document.getElementById('page-title').innerText = 'Zeskanuj ten kod QR';
-            startTimer();
         }
 
         window.onload = function() {
