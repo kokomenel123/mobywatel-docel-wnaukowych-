@@ -8,13 +8,13 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         :root {
-            --bg-black: #0c0d12;
-            --bg-dark: #111319;
+            --bg-black: #111218;
+            --bg-dark: #1F2326;
             --primary-blue: #1e6bf1;
             --text-main: #ffffff;
             --text-muted: #848995;
-            --success-green: #2ecc71;
-            --border-color: #1f232d;
+            --success-green: #2b140e;
+            --border-color: #111218;
         }
 
         * {
@@ -299,6 +299,13 @@
         .nav-item.active .nav-icon.qr-icon {
             border-color: var(--primary-blue);
         }
+        .nav-icon img {
+    width: 24px;       /* Dostosuj szerokość ikonki według uznania */
+    height: 24px;      /* Dostosuj wysokość ikonki */
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+}
     </style>
 </head>
 <body>
@@ -346,28 +353,30 @@
 
     </div>
 
-    <nav class="bottom-nav">
-        <a href="card.html" class="nav-item">
-            <div class="nav-icon">📇</div>
-            <div>Dokumenty</div>
-        </a>
-        <a href="services.html" class="nav-item">
-            <div class="nav-icon">📁</div>
-            <div>Usługi</div>
-        </a>
-        <div class="nav-item active">
-            <div class="nav-icon qr-icon"></div>
-            <div>Kod QR</div>
-        </div>
-        <a href="search.html" class="nav-item">
-            <div class="nav-icon">🔍</div>
-            <div>Szukaj</div>
-        </a>
-        <a href="more.html" class="nav-item">
-            <div class="nav-icon">⣿</div>
-            <div>Więcej</div>
-        </a>
-    </nav>
+   <nav class="bottom-nav">
+    <a href="card.html" class="nav-item">
+        <div class="nav-icon"><img src="img/dokumenty.png" alt="Dokumenty"></div>
+        <div>Dokumenty</div>
+    </a>
+    <a href="services.html" class="nav-item">
+        <div class="nav-icon"><img src="img/uslugi.png" alt="Usługi"></div>
+        <div>Usługi</div>
+    </a>
+    <div class="nav-item active">
+        <div class="nav-icon qr-icon"><img src="img/qr.png" alt="Kod QR"></div>
+        <div>Kod QR</div>
+    </div>
+    <a href="search.html" class="nav-item">
+        <div class="nav-icon"><img src="img/szukaj.png" alt="Szukaj"></div>
+        <div>Szukaj</div>
+    </a>
+    <a href="more.html" class="nav-item">
+        <div class="nav-icon"><img src="img/wiecej.png" alt="Więcej"></div>
+        <div>Więcej</div>
+    </a>
+    
+</nav>
+
 
     <script>
         const TOTAL_TIME = 180; // 3 minuty (180 sekund)
