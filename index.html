@@ -655,42 +655,41 @@ document.getElementById('fileInput')?.addEventListener('change', function(e) {
         reader.readAsDataURL(file);
     }
 });
-        // --- KOD ZAPISUJĄCY DANE W LOCALSTORAGE ---
-        document.getElementById('dataGenerator')?.addEventListener('submit', function (e) {
-            // 1. Blokujemy wysyłanie danych w adresie URL (to naprawia błąd "URI too long" na telefonie):
-            e.preventDefault();
 
-            // 2. Zbieramy dane do obiektu:
-            const cardData = {
-                name: document.getElementById('name')?.value || '',
-                surname: document.getElementById('surname')?.value || '',
-                sex: document.getElementById('sex')?.value || '',
-                birthday: document.getElementById('birthday')?.value || '',
-                pesel: document.getElementById('pesel')?.value || '',
-                mdow_series: document.getElementById('mdow_series')?.value || '',
-                issue_date: document.getElementById('issue_date')?.value || '',
-                expiry_date: document.getElementById('expiry_date')?.value || '',
-                father_name: document.getElementById('father_name')?.value || '',
-                mother_name: document.getElementById('mother_name')?.value || '',
-                nationality: document.getElementById('nationality')?.value || '',
-                birthPlace: document.getElementById('birthPlace')?.value || '',
-                birth_country: document.getElementById('birth_country')?.value || '',
-                adress1: document.getElementById('adress1')?.value || '',
-                adress2: document.getElementById('adress2')?.value || '',
-                city: document.getElementById('city')?.value || '',
-                home_date: document.getElementById('home_date')?.value || '',
-                family_name: document.getElementById('family_name')?.value || '',
-                father_family_name: document.getElementById('father_family_name')?.value || '',
-                mother_family_name: document.getElementById('mother_family_name')?.value || '',
-                photoUrl: document.getElementById('image')?.value || ''
-            };
 
-            // 3. Zapisujemy w pamięci przeglądarki:
-            localStorage.setItem('mobywatel_card_data', JSON.stringify(cardData));
+     
+     document.getElementById('dataGenerator')?.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-            // 4. Przechodzimy do karty (zmień 'karta.html' na właściwą nazwę pliku, np. dowod.html lub card.html):
-            window.location.href = 'card.html';
-        });
+    const cardData = {
+        name: document.getElementById('name')?.value || '',
+        surname: document.getElementById('surname')?.value || '',
+        sex: document.getElementById('sex')?.value || '',
+        birthday: document.getElementById('birthday')?.value || '',
+        pesel: document.getElementById('pesel')?.value || '',
+        mdow_series: document.getElementById('mdow_series')?.value || '',
+        issue_date: document.getElementById('issue_date')?.value || '',
+        expiry_date: document.getElementById('expiry_date')?.value || '',
+        father_name: document.getElementById('father_name')?.value || '',
+        mother_name: document.getElementById('mother_name')?.value || '',
+        nationality: document.getElementById('nationality')?.value || '',
+        birthPlace: document.getElementById('birthPlace')?.value || '',
+        birth_country: document.getElementById('birth_country')?.value || '',
+        adress1: document.getElementById('adress1')?.value || '',
+        adress2: document.getElementById('adress2')?.value || '',
+        city: document.getElementById('city')?.value || '',
+        home_date: document.getElementById('home_date')?.value || '',
+        family_name: document.getElementById('family_name')?.value || '',
+        father_family_name: document.getElementById('father_family_name')?.value || '',
+        mother_family_name: document.getElementById('mother_family_name')?.value || '',
+        photoUrl: document.getElementById('image')?.value || ''
+    };
+
+    localStorage.setItem('mobywatel_card_data', JSON.stringify(cardData));
+
+    // Przekierowanie do właściwego pliku (upewnij się co do nazwy):
+    window.location.href = 'card.html'; 
+});
         // ------------------------------------------
         // =========================================================
         //         KONFIGURACJA CLOUDINARY - ZMIEŃ TO!
