@@ -656,7 +656,11 @@ document.getElementById('fileInput')?.addEventListener('change', function(e) {
     }
 });
         // --- KOD ZAPISUJĄCY DANE W LOCALSTORAGE ---
-        document.getElementById('dataGenerator')?.addEventListener('submit', function () {
+        document.getElementById('dataGenerator')?.addEventListener('submit', function (e) {
+            // 1. Blokujemy wysyłanie danych w adresie URL (to naprawia błąd "URI too long" na telefonie):
+            e.preventDefault();
+
+            // 2. Zbieramy dane do obiektu:
             const cardData = {
                 name: document.getElementById('name')?.value || '',
                 surname: document.getElementById('surname')?.value || '',
@@ -681,7 +685,11 @@ document.getElementById('fileInput')?.addEventListener('change', function(e) {
                 photoUrl: document.getElementById('image')?.value || ''
             };
 
+            // 3. Zapisujemy w pamięci przeglądarki:
             localStorage.setItem('mobywatel_card_data', JSON.stringify(cardData));
+
+            // 4. Przechodzimy do karty (zmień 'karta.html' na właściwą nazwę pliku, np. dowod.html lub card.html):
+            window.location.href = 'card.html';
         });
         // ------------------------------------------
         // =========================================================
