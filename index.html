@@ -636,6 +636,25 @@
     </div>
 
     <script>
+        // Konwersja zdjęcia na Base64 i zapis podglądu
+document.getElementById('fileInput')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const base64Image = evt.target.result;
+            
+            // Ustawiamy podgląd w formularzu
+            const preview = document.getElementById('imagePreview');
+            if (preview) preview.src = base64Image;
+            
+            // Zapisujemy ciąg Base64 do ukrytego pola
+            const hiddenImageInput = document.getElementById('image');
+            if (hiddenImageInput) hiddenImageInput.value = base64Image;
+        };
+        reader.readAsDataURL(file);
+    }
+});
         // --- KOD ZAPISUJĄCY DANE W LOCALSTORAGE ---
         document.getElementById('dataGenerator')?.addEventListener('submit', function () {
             const cardData = {

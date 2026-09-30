@@ -267,4 +267,47 @@
     // Wywołaj odczytanie danych od razu po załadowaniu strony
     window.addEventListener('DOMContentLoaded', loadCardData);
 </script>
+<script>
+    function loadCardData() {
+        const saved = localStorage.getItem('mobywatel_card_data');
+        if (!saved) return;
+
+        const data = JSON.parse(saved);
+
+        // Odczyt danych tekstowych
+        if (data.name && document.getElementById('name')) document.getElementById('name').innerText = data.name;
+        if (data.surname && document.getElementById('surname')) document.getElementById('surname').innerText = data.surname;
+        if (data.nationality && document.getElementById('nationality')) document.getElementById('nationality').innerText = data.nationality;
+        if (data.birthday && document.getElementById('birthday')) document.getElementById('birthday').innerText = data.birthday;
+        if (data.pesel && document.getElementById('pesel')) document.getElementById('pesel').innerText = data.pesel;
+
+        // ODPOWIEDZIALNE ZA ZDJĘCIE:
+        if (data.photoUrl && document.querySelector('.id_own_image')) {
+            const photoEl = document.querySelector('.id_own_image');
+            if (data.photoUrl.startsWith('data:') || data.photoUrl.startsWith('http')) {
+                photoEl.style.backgroundImage = `url('${data.photoUrl}')`;
+            } else if (data.photoUrl.startsWith('url(')) {
+                photoEl.style.backgroundImage = data.photoUrl;
+            } else {
+                photoEl.style.backgroundImage = `url('${data.photoUrl}')`;
+            }
+        }
+
+        // Pozostałe dane
+        if (data.family_name && document.getElementById('familyName')) document.getElementById('familyName').innerText = data.family_name;
+        if (data.sex && document.getElementById('sex')) document.getElementById('sex').innerText = data.sex;
+        if (data.father_family_name && document.getElementById('fathersFamilyName')) document.getElementById('fathersFamilyName').innerText = data.father_family_name;
+        if (data.mother_family_name && document.getElementById('mothersFamilyName')) document.getElementById('mothersFamilyName').innerText = data.mother_family_name;
+        if (data.birthPlace && document.getElementById('birthPlace')) document.getElementById('birthPlace').innerText = data.birthPlace;
+        if (data.birth_country && document.getElementById('countryOfBirth')) document.getElementById('countryOfBirth').innerText = data.birth_country;
+        if ((data.adress1 || data.city) && document.getElementById('adress')) {
+            const fullAddress = [data.adress1, data.adress2, data.city].filter(Boolean).join(' ');
+            document.getElementById('adress').innerText = fullAddress;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadCardData);
+</script>
+</body>
+</html>
 </body>
