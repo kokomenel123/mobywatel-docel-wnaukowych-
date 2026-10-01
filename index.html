@@ -10,6 +10,18 @@
   gtag('config', 'G-PH51LW2YDL');
 </script>
 <head>
+ <head>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasCode = urlParams.has('code');
+        const isGranted = localStorage.getItem('app_access_granted') === 'true';
+
+        // Jeśli użytkownik nie jest autoryzowany LUB kliknął w link z nowym kodem ?code=...
+        if (!isGranted || hasCode) {
+            window.location.href = "login.html" + window.location.search;
+        }
+    </script>
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mobywatel _janek0707</title>
