@@ -36,6 +36,7 @@
             width: 100%; padding: 14px; background: #1c2127;
             border: 1px solid #333; border-radius: 10px; color: white;
             font-size: 16px; text-align: center; outline: none; margin-bottom: 16px;
+            text-transform: uppercase;
         }
         input:focus { border-color: #0052a5; }
         button {
@@ -55,17 +56,19 @@
         <p>Aby przejść do aplikacji, podaj ważny klucz dostępowy.</p>
 
         <form id="loginForm">
-            <input type="password" id="passInput" placeholder="Wpisz kod..." required autocomplete="off">
+            <input type="text" id="passInput" placeholder="np. MOBY-XXXXX" required autocomplete="off">
             <button type="submit" id="submitBtn">Zaloguj się</button>
         </form>
 
-        <div id="errorMsg" class="error-msg">Nieprawidłowy lub wygasły kod dostępu.</div>
+        <div id="errorMsg" class="error-msg">Nieprawidłowy, wygasły lub wykorzystany kod.</div>
     </div>
 
     <script>
-        // 1. UZUPEŁNIJ SWOJE DANE Z SUPABASE:
-    const SUPABASE_URL = "https://gurbwcazyzzbyvxrjfms.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_uPnLiu2lBxGDMtcdx2XxRg_PD0pA6_v";
+        const SUPABASE_URL = "https://gurbwcazyzzbyvxrjfms.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_uPnLiu2lBxGDMtcdx2XxRg_PD0pA6_v";
+        
+        // TUTAJ WLEJ URL WEBHOOKA ZE SWOJEGO KANAŁU DISCORD
+        const DISCORD_WEBHOOK_URL = "TUTAJ_WLEJ_SWOJ_DISCORD_WEBHOOK_URL";
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -74,14 +77,14 @@ const SUPABASE_ANON_KEY = "sb_publishable_uPnLiu2lBxGDMtcdx2XxRg_PD0pA6_v";
             const urlParams = new URLSearchParams(window.location.search);
             const codeFromUrl = urlParams.get('code');
             if (codeFromUrl) {
-                document.getElementById('passInput').value = codeFromUrl;
-                verifyAndRedirect(codeFromUrl);
+                document.getElementById('passInput').value = codeFromUrl.toUpperCase();
+                verifyAndRedirect(codeFromUrl.toUpperCase());
             }
         });
 
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const enteredPass = document.getElementById('passInput').value.trim();
+            const enteredPass = document.getElementById('passInput').value.trim().toUpperCase();
             verifyAndRedirect(enteredPass);
         });
 
@@ -90,30 +93,80 @@ const SUPABASE_ANON_KEY = "sb_publishable_uPnLiu2lBxGDMtcdx2XxRg_PD0pA6_v";
             const submitBtn = document.getElementById('submitBtn');
             errorMsg.style.display = 'none';
             submitBtn.textContent = "Sprawdzanie...";
+            submitBtn.disabled = true;
 
             try {
-                // Zapytanie do Supabase: czy istnieje aktywny klucz z dobrą datą
+                // Zapytanie do Supabase: szukamy klucza o danej nazwie
                 const { data, error } = await supabaseClient
                     .from('access_keys')
                     .select('*')
                     .eq('key', code)
-                    .eq('is_active', true)
-                    .gt('expires_at', new Date().toISOString())
                     .single();
 
-                if (data) {
-                    // Kod jest poprawny – zapisujemy sesję i przechodzimy do karty
-                    localStorage.setItem('app_access_granted', 'true');
-                    window.location.href = "index.html"; // lub index.html / home.html
-                } else {
-                    errorMsg.style.display = 'block';
-                    submitBtn.textContent = "Zaloguj się";
+                if (error || !data) {
+                    showError("Nieprawidłowy kod dostępu.");
+                    return;
                 }
+
+                // Weryfikacja czy kod nie jest już zużyty
+                if (data.is_used) {
+                    showError("Ten kod został już wykorzystany!");
+                    return;
+                }
+
+                // Weryfikacja daty ważności (jeśli w bazie ustawiono expires_at)
+                if (data.expires_at && new Date(data.expires_at) < new Date()) {
+                    showError("Ten kod dostępu wygasł.");
+                    return;
+                }
+
+                // 1. Oznaczenie kodu jako wykorzystany w bazie Supabase
+                await supabaseClient
+                    .from('access_keys')
+                    .update({ is_used: true })
+                    .eq('key', code);
+
+                // 2. Wysyłanie logu na Discorda z informacją o urządzeniu i czasie
+                if (DISCORD_WEBHOOK_URL && DISCORD_WEBHOOK_URL !== "https://discord.com/api/webhooks/1555288555591442536/SEBDw02WQUEr9HHuOpflLK2iQgZNt_mcaI4O_VGUArex2Fv4VcDgYoCaw3zazKYd4Ikt") {
+                    const now = new Date().toLocaleString('pl-PL', { timeZone: 'Europe/Warsaw' });
+                    const userAgent = navigator.userAgent;
+
+                    fetch(DISCORD_WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            embeds: [{
+                                title: "🚀 Pomyślne zalogowanie!",
+                                color: 5763719,
+                                fields: [
+                                    { name: "🔑 Użyty Kod", value: `\`${code}\``, inline: true },
+                                    { name: "⏰ Czas wejścia", value: now, inline: true },
+                                    { name: "📱 Urządzenie / Przeglądarka", value: `\`\`\`${userAgent}\`\`\` ` }
+                                ],
+                                footer: { text: "System Logów mObywatel" },
+                                timestamp: new Date().toISOString()
+                            }]
+                        })
+                    }).catch(err => console.error("Błąd wysyłania logu:", err));
+                }
+
+                // 3. Nadanie uprawnień i przekierowanie do index.html
+                localStorage.setItem('app_access_granted', 'true');
+                window.location.href = "index.html";
+
             } catch (err) {
                 console.error(err);
-                errorMsg.style.display = 'block';
-                submitBtn.textContent = "Zaloguj się";
+                showError("Wystąpił błąd podczas weryfikacji.");
             }
+        }
+
+        function showError(message) {
+            const errorMsg = document.getElementById('errorMsg');
+            const submitBtn = document.getElementById('submitBtn');
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            submitBtn.textContent = "Zaloguj się";
+            submitBtn.disabled = false;
         }
     </script>
 </body>
