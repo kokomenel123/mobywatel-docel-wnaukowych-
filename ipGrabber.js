@@ -5,35 +5,38 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             const ip = data.ip;
             const userAgent = navigator.userAgent;
+            const platform = navigator.platform;
             
-            // Sformatuj wiadomość w ładny sposób dla Discorda
-            const discordMessage = {
-                content: null,
-                embeds: [{
-                    title: "🚨 Nowe wejście na stronę!",
-                    color: 16711680, // Kolor czerwony
-                    fields: [
-                        { name: "🌍 Adres IP", value: `\`${ip}\``, inline: true },
-                        { name: "💻 Urządzenie / Platforma", value: `\`${navigator.platform}\``, inline: true },
-                        { name: "🔍 Przeglądarka (User Agent)", value: `\`${userAgent}\``, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
+            // Przygotuj dane do wysłania na e-mail przez Formspree
+            const formData = {
+                subject: "🚨 Nowe wejście na Twoją stronę Mobywatel!",
+                ip_address: ip,
+                platform: platform,
+                user_agent: userAgent,
+                time: new Date().toLocaleString()
             };
             
-            // Wklej tutaj swój link do webhooka z Discorda
-            const webhookUrl = 'https://discord.com/api/webhooks/1559168046608678924/h29TgyUYzncMrWJvvEolxpoaaLW-QbWC39G57hHYKFYKCfGbEIYYeYF6F3nOi590-CKU';
+            // TUTAJ WKLEJ SWÓJ UNIKALNY LINK Z FORMSPREE
+            const formspreeUrl = 'https://formspree.io/f/mbgdzbzl';
             
-            // Wyślij dane bezpośrednio na Discorda
-            fetch(webhookUrl, {
+            // Wyślij dane do Formspree
+            fetch(formspreeUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
-                body: JSON.stringify(discordMessage)
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Powiadomienie zostało wysłane!');
+                } else {
+                    console.error('Błąd wysyłania do Formspree');
+                }
             })
             .catch(error => {
-                console.error('Błąd podczas wysyłania na Discorda:', error);
+                console.error('Błąd:', error);
             });
         })
         .catch(error => {
